@@ -119,7 +119,7 @@ public:
    * @param caret - &id:oatpp::parser::Caret;.
    * @return - &id:oatpp::String;.
    */
-  static String parseString(ParsingCaret& caret);
+  static String parseString(ParsingCaret& caret, v_uint32 flags);
 
   /**
    * Parse string enclosed in `"<string>"`.

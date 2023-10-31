@@ -111,6 +111,11 @@ public:
     bool allowUnknownFields = true;
 
     /**
+     * Escape flags.
+     */
+    v_uint32 escapeFlags = json::Utils::FLAG_ESCAPE_ALL;
+
+    /**
      * Enable type interpretations.
      */
     std::vector<std::string> enabledInterpretations = {};
@@ -188,7 +193,7 @@ private:
       while (!caret.isAtChar('}') && caret.canContinue()) {
 
         caret.skipBlankChars();
-        auto key = Utils::parseString(caret);
+        auto key = Utils::parseString(caret, deserializer->getConfig()->escapeFlags);
         if(caret.hasError()){
           return nullptr;
         }

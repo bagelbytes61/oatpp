@@ -423,31 +423,37 @@ const char* Utils::preparseString(ParsingCaret& caret, v_buff_size& size){
   
 }
   
-oatpp::String Utils::parseString(ParsingCaret& caret) {
+oatpp::String Utils::parseString(ParsingCaret& caret, v_uint32 escapeFlags) {
   
   v_buff_size size;
   const char* data = preparseString(caret, size);
   
+  String result = nullptr;
+
+
   if(data != nullptr) {
-  
+
     v_buff_size pos = caret.getPosition();
     
-    v_int64 errorCode;
-    v_buff_size errorPosition;
-    auto result = unescapeString(data, size, errorCode, errorPosition);
-    if(errorCode != 0){
-      caret.setError("[oatpp::parser::json::Utils::parseString()]: Error. Call to unescapeString() failed", errorCode);
-      caret.setPosition(pos + errorPosition);
-    } else {
-      caret.setPosition(pos + size + 1);
+    if (escapeFlags & FLAG_ESCAPE_SOLIDUS) {
+      v_int64 errorCode;
+      v_buff_size errorPosition;
+      result = unescapeString(data, size, errorCode, errorPosition);
+      if(errorCode != 0){
+        caret.setError("[oatpp::parser::json::Utils::parseString()]: Error. Call to unescapeString() failed", errorCode);
+        caret.setPosition(pos + errorPosition);
+
+        return nullptr;
+      }
+    } else if (escapeFlags == 0) {
+      result = String(data, size);
     }
-    
-    return result;
-    
+  
+    caret.setPosition(pos + size + 1);
   }
-  
-  return nullptr;
-  
+
+  return result;
+
 }
   
 std::string Utils::parseStringToStdString(ParsingCaret& caret){

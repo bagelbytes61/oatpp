@@ -207,7 +207,7 @@ oatpp::Void Deserializer::deserializeString(Deserializer* deserializer, parser::
   if(caret.isAtText("null", true)){
     return oatpp::Void(String::Class::getType());
   } else {
-    return oatpp::Void(oatpp::parser::json::Utils::parseString(caret).getPtr(), String::Class::getType());
+    return oatpp::Void(oatpp::parser::json::Utils::parseString(caret, deserializer->getConfig()->escapeFlags).getPtr(), String::Class::getType());
   }
 }
 
@@ -355,7 +355,7 @@ oatpp::Void Deserializer::deserializeMap(Deserializer* deserializer, parser::Car
     while (!caret.isAtChar('}') && caret.canContinue()) {
 
       caret.skipBlankChars();
-      auto key = Utils::parseString(caret);
+      auto key = Utils::parseString(caret, deserializer->getConfig()->escapeFlags);
       if(caret.hasError()){
         return nullptr;
       }
